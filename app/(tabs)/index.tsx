@@ -1,74 +1,120 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
+import {Image, StyleSheet, Platform, FlatList} from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import {useEffect, useState} from "react";
+import {Book} from "@/types/types";
+import BookCard from "@/components/BookCard";
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+export default function Destaques() {
+    const [popularBooks, setPopularBooks] = useState<Book[]>([]);
+    const [recentBooks, setRecentBooks] = useState<Book[]>([]);
+    const [loadingPopular, setLoadingPopular] = useState(true);
+    const [loadingRecent, setLoadingRecent] = useState(true);
+
+    const fetchPopularBooks = () => {
+        setLoadingPopular(true);
+        fetch("http://100.100.100.251:5000/library/books/most-popular")
+            .then((res) => res.json())
+            .then((data) => {
+                setPopularBooks(data);
+                //console.log(data);
+            })
+            .catch((err) => console.error(err))
+            .finally(() => setLoadingPopular(false));
+    };
+
+    const fetchRecentBooks = () => {
+        setLoadingRecent(true);
+        fetch("http://100.100.100.251:5000/library/books/most-recent")
+            .then((res) => res.json())
+            .then((data) => {
+                setRecentBooks(data);
+                //console.log(data);
+            })
+            .catch((err) => console.error(err))
+            .finally(() => setLoadingRecent(false));
+    };
+
+    useEffect(() => {
+        fetchPopularBooks();
+        fetchRecentBooks();
+    }, []);
+
+    return (
+        <ParallaxScrollView
+            headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+            headerImage={
+                <Image
+                    source={require('@/assets/images/books_destaque.png')}
+                    style={styles.booksLogo}
+                />
+            }>
+            <ThemedView style={styles.titleContainer}>
+                <ThemedText type="title">Destaques</ThemedText>
+            </ThemedView>
+            <ThemedView style={styles.subtitle}>
+                <ThemedText type="subtitle">Mais Populares</ThemedText>
+            </ThemedView>
+            <ThemedView>
+                <FlatList
+                    data={popularBooks}
+                    keyExtractor={(item) => item.bookId.toString()}
+                    renderItem={({ item }) => <BookCard book={item} />}
+                    numColumns={2} // Define o número de colunas
+                    columnWrapperStyle={styles.columnWrapper}
+                    showsHorizontalScrollIndicator={false}
+                    nestedScrollEnabled
+                />
+            </ThemedView>
+
+            <ThemedView style={styles.subtitle}>
+                <ThemedText type="subtitle">Mais Recentes</ThemedText>
+            </ThemedView>
+            <ThemedView>
+                <FlatList
+                    data={recentBooks}
+                    keyExtractor={(item) => item.bookId.toString()}
+                    renderItem={({ item }) => <BookCard book={item} />}
+                    numColumns={2} // Define o número de colunas
+                    columnWrapperStyle={styles.columnWrapper}
+                    showsHorizontalScrollIndicator={false}
+                    nestedScrollEnabled
+                />
+            </ThemedView>
+        </ParallaxScrollView>
+    );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+    titleContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        marginBottom: 8,
+    },
+    stepContainer: {
+        gap: 8,
+        marginBottom: 8,
+    },
+    columnWrapper: {
+        justifyContent: 'space-between', // Espaço uniforme entre os itens
+        marginBottom: 16, // Espaço entre as linhas
+    },
+    subtitle: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        marginBottom: 8,
+    },
+    booksLogo: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
+        alignSelf: 'center'
+    },
 });
