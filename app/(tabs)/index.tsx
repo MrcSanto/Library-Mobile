@@ -5,6 +5,12 @@ import { ThemedView } from '@/components/ThemedView';
 import {useEffect, useState} from "react";
 import {Book} from "@/types/types";
 import BookCard from "@/components/BookCard";
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs([
+    'VirtualizedLists should never be nested',
+]);
+
 
 export default function Destaques() {
     const [popularBooks, setPopularBooks] = useState<Book[]>([]);

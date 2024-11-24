@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '@/context/authContext';
 import { Client } from '@/types/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ClientCard from '@/components/ClientCard'; // Certifique-se de que o caminho está correto
+import ClientCard from '@/components/ClientCard';
 
 export default function Clients() {
     const [clients, setClients] = useState<Client[]>([]);

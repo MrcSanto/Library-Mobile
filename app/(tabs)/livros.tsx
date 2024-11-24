@@ -1,9 +1,7 @@
 import { StyleSheet, Image, View, TextInput, FlatList } from 'react-native';
 import { useEffect, useState } from 'react';
 
-import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import { Book } from '@/types/types';
 import BookCard from '@/components/BookCard';
 
@@ -41,21 +39,17 @@ export default function Livros() {
         setFilteredBooks(filtered);
     };
 
-    return (
-        <ParallaxScrollView
-            headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-            headerImage={
-                <Image
-                    source={require('@/assets/images/bookshelf.png')}
-                    style={styles.headerImage}
-                />
-            }>
-            <ThemedView style={styles.titleContainer}>
+    const renderHeader = () => (
+        <>
+            <Image
+                source={require('@/assets/images/bookshelf.png')}
+                style={styles.headerImage}
+            />
+            <View style={styles.titleContainer}>
                 <ThemedText type="title">Nossos Livros</ThemedText>
-            </ThemedView>
-
+            </View>
             {/* Barra de pesquisa */}
-            <ThemedView style={styles.searchContainer}>
+            <View style={styles.searchContainer}>
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Procure por um livro..."
@@ -63,31 +57,35 @@ export default function Livros() {
                     value={searchText}
                     onChangeText={handleSearch}
                 />
-            </ThemedView>
+            </View>
+        </>
+    );
 
-            <ThemedView style={styles.contentContainer}>
-                {loading ? (
+    return (
+        <FlatList
+            data={filteredBooks}
+            keyExtractor={(item) => item.bookId.toString()}
+            renderItem={({ item }) => <BookCard book={item} />}
+            numColumns={2}
+            columnWrapperStyle={styles.columnWrapper}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.flatListContainer}
+            ListHeaderComponent={renderHeader}
+            ListEmptyComponent={
+                loading ? (
                     <ThemedText>Carregando livros...</ThemedText>
                 ) : (
-                    <FlatList
-                        data={filteredBooks}
-                        keyExtractor={(item) => item.bookId.toString()}
-                        renderItem={({ item }) => <BookCard book={item} />}
-                        numColumns={2}
-                        columnWrapperStyle={styles.columnWrapper}
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={styles.flatListContainer} // Adicionando estilo para ajustar a largura
-                    />
-                )}
-            </ThemedView>
-        </ParallaxScrollView>
+                    <ThemedText>Nenhum livro encontrado.</ThemedText>
+                )
+            }
+        />
     );
 }
 
 const styles = StyleSheet.create({
     headerImage: {
         width: '100%',
-        height: '100%',
+        height: 200,
         resizeMode: 'cover',
         alignSelf: 'center',
     },
@@ -108,18 +106,12 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
     },
-    contentContainer: {
-        padding: 16,
-    },
     flatListContainer: {
-        paddingHorizontal: 10, // Espaçamento horizontal dentro da tela
-        width: '100%', // Garante que ocupe toda a largura disponível
+        paddingHorizontal: 16,
+        paddingBottom: 16,
     },
     columnWrapper: {
-        justifyContent: 'space-between', // Espaçamento uniforme entre os itens
-        marginBottom: 16, // Espaçamento entre as linhas
-    },
-    list: {
-        paddingBottom: 16,
+        justifyContent: 'space-between',
+        marginBottom: 16,
     },
 });

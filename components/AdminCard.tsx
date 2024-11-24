@@ -27,7 +27,7 @@ const AdminCard: React.FC<AdminCardProps> = ({ book, onDelete, onUpdate }) => {
 
     useEffect(() => {
         setEditedBook({ ...book });
-        console.log("AdminCard recebido book:", book);
+        //console.log("AdminCard recebido book:", book);
     }, [book]);
 
     const defaultImage = "https://via.placeholder.com/150";
@@ -40,65 +40,99 @@ const AdminCard: React.FC<AdminCardProps> = ({ book, onDelete, onUpdate }) => {
         setShowEditModal(true);
     };
 
-    const handleSaveEdit = async () => {
-        try {
-            const token = await AsyncStorage.getItem('@user_token');
-            if (!token) {
-                Alert.alert('Erro', 'Você precisa estar logado para realizar esta ação.');
-                return;
-            }
-
-            const response = await fetch(`http://100.100.100.251:5000/library/books/${editedBook.bookId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+    const handleSaveEdit = () => {
+        Alert.alert(
+            "Confirmar Edição",
+            "Tem certeza que deseja salvar as alterações?",
+            [
+                {
+                    text: "Cancelar",
+                    style: "cancel",
                 },
-                body: JSON.stringify(editedBook),
-            });
+                {
+                    text: "Salvar",
+                    onPress: async () => {
+                        try {
+                            const token = await AsyncStorage.getItem('@user_token');
+                            if (!token) {
+                                Alert.alert('Erro', 'Você precisa estar logado para realizar esta ação.');
+                                return;
+                            }
 
-            if (response.ok) {
-                const updatedData = await response.json();
-                Alert.alert('Sucesso', 'Livro atualizado com sucesso.');
-                onUpdate(updatedData);
-                setShowEditModal(false);
-            } else {
-                Alert.alert('Erro', 'Não foi possível salvar as alterações.');
-            }
-        } catch (error) {
-            console.error('Erro ao salvar alterações:', error);
-            Alert.alert('Erro', 'Ocorreu um erro ao salvar as alterações.');
-        }
+                            const response = await fetch(`http://100.100.100.251:5000/library/books/${editedBook.bookId}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    Authorization: `Bearer ${token}`,
+                                },
+                                body: JSON.stringify(editedBook),
+                            });
+
+                            if (response.ok) {
+                                const updatedData = await response.json();
+                                console.log('API Response (updatedData):', updatedData);
+                                Alert.alert('Sucesso', 'Livro atualizado com sucesso.');
+                                onUpdate(updatedData);
+                                setShowEditModal(false);
+                            } else {
+                                Alert.alert('Erro', 'Não foi possível salvar as alterações.');
+                            }
+                        } catch (error) {
+                            console.error('Erro ao salvar alterações:', error);
+                            Alert.alert('Erro', 'Ocorreu um erro ao salvar as alterações.');
+                        }
+                    },
+                },
+            ],
+            { cancelable: true }
+        );
     };
 
-    const handleDeleteBook = async () => {
-        try {
-            const token = await AsyncStorage.getItem('@user_token');
-            if (!token) {
-                Alert.alert('Erro', 'Você precisa estar logado para realizar esta ação.');
-                return;
-            }
-
-            const response = await fetch(`http://100.100.100.251:5000/library/books/${book.bookId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+    const handleDeleteBook = () => {
+        Alert.alert(
+            "Confirmar Exclusão",
+            "Tem certeza que deseja deletar este livro?",
+            [
+                {
+                    text: "Cancelar",
+                    style: "cancel",
                 },
-            });
+                {
+                    text: "Deletar",
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            const token = await AsyncStorage.getItem('@user_token');
+                            if (!token) {
+                                Alert.alert('Erro', 'Você precisa estar logado para realizar esta ação.');
+                                return;
+                            }
 
-            if (response.ok) {
-                Alert.alert('Sucesso', 'Livro deletado com sucesso.');
-                onDelete(book.bookId);
-            } else {
-                Alert.alert('Erro', 'Não foi possível deletar o livro.');
-            }
-        } catch (error) {
-            console.error('Erro ao deletar livro:', error);
-            Alert.alert('Erro', 'Ocorreu um erro ao deletar o livro.');
-        }
+                            const response = await fetch(`http://100.100.100.251:5000/library/books/${book.bookId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    Authorization: `Bearer ${token}`,
+                                },
+                            });
+
+                            if (response.ok) {
+                                Alert.alert('Sucesso', 'Livro deletado com sucesso.');
+                                onDelete(book.bookId);
+                                setShowModal(false); // Fecha o modal após a exclusão
+                            } else {
+                                Alert.alert('Erro', 'Não foi possível deletar o livro.');
+                            }
+                        } catch (error) {
+                            console.error('Erro ao deletar livro:', error);
+                            Alert.alert('Erro', 'Ocorreu um erro ao deletar o livro.');
+                        }
+                    },
+                },
+            ],
+            { cancelable: true }
+        );
     };
-
 
     return (
         <View style={styles.card}>
@@ -201,6 +235,12 @@ const AdminCard: React.FC<AdminCardProps> = ({ book, onDelete, onUpdate }) => {
                             <Text style={styles.closeButtonText}>Salvar</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
+                            style={[styles.closeButton, styles.deleteButton]}
+                            onPress={handleDeleteBook}
+                        >
+                            <Text style={styles.closeButtonText}>Deletar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
                             style={styles.closeButton}
                             onPress={() => setShowEditModal(false)}
                         >
@@ -254,6 +294,10 @@ const styles = StyleSheet.create({
     },
     editButton: {
         backgroundColor: "#28a745",
+        marginTop: 8,
+    },
+    deleteButton: {
+        backgroundColor: "red",
         marginTop: 8,
     },
     modalContainer: {
