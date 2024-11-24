@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import { Book } from '@/types/types';
 import BookCard from '@/components/BookCard';
+import React from 'react';
 
 export default function Livros() {
     const [books, setBooks] = useState<Book[]>([]);
