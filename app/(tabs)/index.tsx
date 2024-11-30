@@ -20,7 +20,7 @@ export default function Destaques() {
 
     const fetchPopularBooks = () => {
         setLoadingPopular(true);
-        fetch("http://100.100.100.251:5000/library/books/most-popular")
+        fetch("http://super-santo.com.br:5000/library/books/most-popular")
             .then((res) => res.json())
             .then((data) => {
                 setPopularBooks(data);
@@ -32,7 +32,7 @@ export default function Destaques() {
 
     const fetchRecentBooks = () => {
         setLoadingRecent(true);
-        fetch("http://100.100.100.251:5000/library/books/most-recent")
+        fetch("http://super-santo.com.br:5000/library/books/most-recent")
             .then((res) => res.json())
             .then((data) => {
                 setRecentBooks(data);

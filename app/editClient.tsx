@@ -21,7 +21,7 @@ const EditClient = () => {
                     return;
                 }
 
-                const response = await fetch(`http://100.100.100.251:5000/library/clients/${id}`, {
+                const response = await fetch(`http://super-santo.com.br:5000/library/clients/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`, // Inclui o token no cabeçalho
                     },
@@ -48,7 +48,7 @@ const EditClient = () => {
                 return;
             }
 
-            const response = await fetch(`http://100.100.100.251:5000/library/clients/${id}`, {
+            const response = await fetch(`http://super-santo.com.br:5000/library/clients/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

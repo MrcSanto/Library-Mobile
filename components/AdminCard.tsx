@@ -59,7 +59,7 @@ const AdminCard: React.FC<AdminCardProps> = ({ book, onDelete, onUpdate }) => {
                                 return;
                             }
 
-                            const response = await fetch(`http://100.100.100.251:5000/library/books/${editedBook.bookId}`, {
+                            const response = await fetch(`http://super-santo.com.br:5000/library/books/${editedBook.bookId}`, {
                                 method: 'PUT',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ const AdminCard: React.FC<AdminCardProps> = ({ book, onDelete, onUpdate }) => {
                                 return;
                             }
 
-                            const response = await fetch(`http://100.100.100.251:5000/library/books/${book.bookId}`, {
+                            const response = await fetch(`http://super-santo.com.br:5000/library/books/${book.bookId}`, {
                                 method: 'DELETE',
                                 headers: {
                                     'Content-Type': 'application/json',

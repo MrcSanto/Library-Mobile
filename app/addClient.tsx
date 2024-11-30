@@ -25,7 +25,7 @@ const AddClient = () => {
                 return;
             }
 
-            const response = await fetch('http://100.100.100.251:5000/library/clients', {
+            const response = await fetch('http://super-santo.com.br:5000/library/clients', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

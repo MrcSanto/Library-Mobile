@@ -14,7 +14,7 @@ export default function Categorias() {
     // Função para buscar as categorias
     const fetchCategorias = () => {
         setLoading(true);
-        fetch('http://100.100.100.251:5000/library/categories')
+        fetch('http://super-santo.com.br:5000/library/categories')
             .then((res) => res.json())
             .then((data) => setCategorias(data))
             .catch((err) => console.error('Erro ao buscar categorias:', err))

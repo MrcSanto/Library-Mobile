@@ -15,7 +15,7 @@ export default function Livros() {
     // Função para buscar os livros
     const fetchBooks = () => {
         setLoading(true);
-        fetch('http://100.100.100.251:5000/library/books')
+        fetch('http://super-santo.com.br:5000/library/books')
             .then((res) => res.json())
             .then((data) => {
                 setBooks(data.data);
